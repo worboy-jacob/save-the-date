@@ -1,0 +1,255 @@
+/* Brittany Signature: drop BrittanySignature.ttf (or .otf/.woff2) into site/fonts/ and it is used automatically */
+@font-face {
+  font-family: "Brittany Signature";
+  src: url("fonts/BrittanySignature.woff2") format("woff2"),
+       url("fonts/BrittanySignature.ttf") format("truetype"),
+       url("fonts/BrittanySignature.otf") format("opentype");
+  font-display: swap;
+}
+
+/* Shared envelope styles — used by index.html and by tools/gif-frame.html
+   (so the email GIF and the webpage envelope always match). */
+
+:root {
+  --cream: #f3ead6;
+  --cream-hi: #faf5ea;
+  --cream-lo: #e4d6b9;
+  --ink: #3b2f22;
+  --gold: #d6bd84;
+  --gold-lo: #a88a4d;
+  --forest: #1c2a20;
+  --forest-deep: #111a14;
+  --wax: #f4f1ea;
+  --wax-hi: #ffffff;
+  --wax-lo: #cfc9bc;
+  --text: #f6efd2;
+  --script: "Brittany Signature", "Ms Madi", "Allura", cursive;
+  --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+}
+
+.envelope {
+  --h: calc(var(--w) * 0.68);
+  position: relative;
+  width: var(--w);
+  height: var(--h);
+  perspective: 1400px;
+}
+
+/* back panel + patterned liner (visible once the flap opens) */
+.env-back {
+  position: absolute;
+  inset: 0;
+  border-radius: calc(var(--w) * 0.012);
+  background: linear-gradient(180deg, var(--cream-lo), #dccdae);
+  box-shadow:
+    0 calc(var(--w) * 0.05) calc(var(--w) * 0.09) rgba(0, 0, 0, 0.45),
+    0 calc(var(--w) * 0.01) calc(var(--w) * 0.02) rgba(0, 0, 0, 0.3);
+}
+/* body liner: starts right at the fold (top edge) so it joins the flap's liner, cream paper border on the sides */
+.liner {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  top: 0;
+  height: 70%;
+  border-radius: 0 0 calc(var(--w) * 0.006) calc(var(--w) * 0.006);
+  background-color: #d9e7f2;
+  background-image: var(--liner, none);
+  background-size: calc(var(--w) * 0.42);
+}
+
+/* the card: clipped only at the bottom so it can slide up out of the pocket */
+.card-clip {
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  top: calc(var(--h) * -4);
+  bottom: 3%;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+.card {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--h) * 4 + var(--h) * 0.07);
+  aspect-ratio: 3 / 4;
+  border-radius: calc(var(--w) * 0.008);
+  overflow: hidden;
+  background: var(--forest);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  transition: transform 1s cubic-bezier(0.55, 0.05, 0.25, 1);
+}
+.card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* front pocket */
+.env-front {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  overflow: visible;
+  filter: drop-shadow(0 -1px 2px rgba(60, 40, 10, 0.18));
+}
+
+/* recipient name written on the pocket */
+.env-name {
+  position: absolute;
+  z-index: 4;
+  left: 12%;
+  right: 12%;
+  bottom: 5%;
+  height: 21%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--script);
+  font-size: calc(var(--w) * 0.085);
+  line-height: 1.05;
+  color: var(--ink);
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+/* top flap */
+.flap {
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 62%;
+  transform-origin: 50% 0;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.45, 0.05, 0.3, 1);
+}
+.flap-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  clip-path: polygon(0 0, 100% 0, 54% 94%, 52% 98%, 50% 99.5%, 48% 98%, 46% 94%);
+}
+.flap-out {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 40%),
+    linear-gradient(180deg, var(--cream-hi), var(--cream) 55%, #e9dcc0);
+}
+.flap-in {
+  /* rotateY (not X) so that, once the flap swings up, the tip points up */
+  transform: rotateY(180deg);
+  background: linear-gradient(180deg, var(--cream-hi), var(--cream));   /* envelope paper border */
+}
+/* the liner on the flap: inset from the sides and tip, flush with the fold so it meets the body liner */
+.flap-in::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 5%;
+  right: 5%;
+  bottom: 9%;
+  clip-path: polygon(0 0, 100% 0, 54% 94%, 52% 98%, 50% 99.5%, 48% 98%, 46% 94%);
+  background-color: #d9e7f2;
+  background-image: var(--liner, none);
+  background-size: calc(var(--w) * 0.42);
+  background-position: 0 0;
+}
+/* soft shadow the closed flap casts on the pocket */
+.flap-shadow {
+  position: absolute;
+  z-index: 4;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 64%;
+  background: rgba(70, 45, 15, 0.22);
+  filter: blur(calc(var(--w) * 0.008));
+  clip-path: polygon(0 0, 100% 0, 54% 94%, 52% 98%, 50% 99.5%, 48% 98%, 46% 94%);
+  transition: opacity 0.3s;
+}
+
+/* sheer chiffon ribbon wrapped across the envelope, tied under the seal */
+.ribbon {
+  position: absolute;
+  z-index: 7;
+  inset: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 calc(var(--w) * 0.002) calc(var(--w) * 0.004) rgba(90, 70, 40, 0.18));
+}
+.ribbon svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.ribbon .band, .ribbon .bow, .ribbon .bow path { transition: transform 0.7s cubic-bezier(.5, 0, .3, 1), opacity 0.7s ease; transform-box: fill-box; }
+.ribbon .loop-l { transform-origin: 100% 50%; }
+.ribbon .loop-r { transform-origin: 0% 50%; }
+.ribbon .tail-l, .ribbon .tail-r { transform-origin: 50% 0%; }
+/* untie: loops pull through and collapse, tails slip down, then the ribbon fades away */
+.ribbon.untie .loop-l { transform: translateX(30%) scale(0.2, 0.5) rotate(25deg); opacity: 0; }
+.ribbon.untie .loop-r { transform: translateX(-30%) scale(0.2, 0.5) rotate(-25deg); opacity: 0; }
+.ribbon.untie .tail-l { transform: translate(-20%, 35%) rotate(12deg); opacity: 0; transition-delay: 0.15s; }
+.ribbon.untie .tail-r { transform: translate(20%, 35%) rotate(-12deg); opacity: 0; transition-delay: 0.15s; }
+.ribbon.untie .bow { opacity: 0; transition-delay: 0.25s; }
+.ribbon.untie .band { opacity: 0; transform: translateY(6%) scaleX(1.04); transition-delay: 0.2s; transition-duration: 0.7s; }
+
+/* little posy tucked under the wax seal (drawn by flowers.js) */
+.posy {
+  position: absolute;
+  z-index: 6;
+  width: calc(var(--w) * 0.64);
+  height: calc(var(--w) * 0.5292);
+  left: calc(50% - var(--w) * 0.32);
+  top: calc(var(--h) * 0.58 - var(--w) * 0.3569);
+  pointer-events: none;
+  filter: drop-shadow(0 calc(var(--w) * 0.004) calc(var(--w) * 0.006) rgba(60, 45, 20, 0.25));
+}
+.posy svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+/* wax seal */
+.seal {
+  position: absolute;
+  z-index: 8;
+  left: calc(50% - var(--w) * 0.075);
+  top: calc(var(--h) * 0.58 - var(--w) * 0.075);
+  width: calc(var(--w) * 0.15);
+  height: calc(var(--w) * 0.15);
+  /* hinged at the envelope's top edge, so it lifts with the flap */
+  transform-origin: 50% calc(var(--w) * 0.075 - var(--h) * 0.58);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 47% 53% 50% 50% / 52% 46% 54% 48%;
+  background:
+    radial-gradient(circle at 35% 30%, var(--wax-hi), var(--wax) 45%, var(--wax-lo) 100%);
+  box-shadow:
+    0 calc(var(--w) * 0.006) calc(var(--w) * 0.016) rgba(60, 45, 20, 0.45),
+    inset 0 calc(-1 * var(--w) * 0.006) calc(var(--w) * 0.012) rgba(120, 105, 80, 0.35),
+    inset 0 calc(var(--w) * 0.004) calc(var(--w) * 0.006) rgba(255, 255, 255, 0.9);
+  display: grid;
+  place-items: center;
+  transition: transform 0.8s cubic-bezier(0.45, 0.05, 0.3, 1);
+}
+.seal.open { transform: rotateX(180deg); }
+.seal::before {
+  content: "";
+  position: absolute;
+  inset: 13%;
+  border-radius: 50%;
+  border: calc(var(--w) * 0.004) solid rgba(140, 125, 95, 0.35);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 1px 1px rgba(120, 105, 80, 0.25);
+}
+.seal span {
+  position: relative;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: calc(var(--w) * 0.046);
+  letter-spacing: 0.02em;
+  color: #a88a4d;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9), 0 -1px 0 rgba(90, 70, 30, 0.25);
+  white-space: nowrap;
+}

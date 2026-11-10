@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Save the Date · Rebecca &amp; Jacob</title>
+<meta name="description" content="Rebecca &amp; Jacob · September 5, 2027 · Bean Town Receptions">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1c2a20">
+<!-- Link previews (iMessage, WhatsApp, etc.) -->
+<meta property="og:title" content="Save the Date · Rebecca &amp; Jacob">
+<meta property="og:description" content="September 5, 2027 · Bean Town Receptions">
+<meta property="og:image" content="https://rebeccaandjacob.ca/photo.jpg">
+<meta property="og:url" content="https://rebeccaandjacob.ca/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Ms+Madi&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="photo.jpg">
+<link rel="stylesheet" href="envelope.css?v=31">
+<script src="flowers.js?v=30"></script>
+<style>
+  :root {
+    --w: min(86vw, 460px, 62vh);
+  }
+  @supports (height: 1svh) {
+    :root { --w: min(86vw, 460px, 62svh); }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--forest-deep);
+    color: var(--text);
+    font-family: var(--serif);
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* blurred, darkened copy of the photo as the backdrop */
+  .backdrop {
+    position: fixed;
+    inset: -60px;
+    background: url("photo.jpg") center / cover no-repeat;
+    filter: blur(26px) brightness(0.5) saturate(1.15);
+    transform: scale(1.05);
+  }
+  .backdrop::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0) 30%, rgba(0,0,0,0.55) 100%);
+  }
+
+  /* ---------- scene 1: the envelope ---------- */
+  .scene {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    gap: calc(var(--w) * 0.1);
+  }
+  .greeting {
+    margin: 0;
+    font-size: clamp(13px, calc(var(--w) * 0.036), 17px);
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0;
+    animation: fadeUp 1s 0.2s ease forwards;
+    transition: opacity 0.4s;
+  }
+  .env-wrap {
+    cursor: pointer;
+    outline: none;
+    opacity: 0;
+    animation: fadeUp 1.1s 0.35s cubic-bezier(.2,.7,.2,1) forwards;
+  }
+  .env-float {
+    transition: transform 0.9s cubic-bezier(.45,.05,.3,1), opacity 0.8s ease;
+  }
+  .env-wrap:focus-visible .env-back { outline: 2px solid var(--gold); outline-offset: 6px; }
+  .hint {
+    margin: 0;
+    font-size: clamp(16px, calc(var(--w) * 0.05), 22px);
+    font-style: italic;
+    letter-spacing: 0.06em;
+    color: var(--text);
+    opacity: 0;
+    animation: fadeUp 1s 1.2s ease forwards, pulse 2.4s 2.2s ease-in-out infinite;
+    transition: opacity 0.4s;
+  }
+  .hint::before, .hint::after {
+    content: "";
+    display: inline-block;
+    width: 1.8em;
+    height: 1px;
+    margin: 0 0.7em;
+    vertical-align: middle;
+    background: linear-gradient(90deg, transparent, var(--gold));
+  }
+  .hint::after { background: linear-gradient(90deg, var(--gold), transparent); }
+
+  /* who it's for, above the envelope (same lettering as the email) */
+  .to { margin: 0; text-align: center; opacity: 0; animation: fadeUp 1s 0.2s ease forwards; transition: opacity 0.4s; }
+  .to-label {
+    display: block;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(12px, calc(var(--w) * 0.032), 14px);
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.7em;
+  }
+  .to-name {
+    display: block;
+    max-width: calc(var(--w) * 1.05);
+    margin: 0 auto;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(15px, calc(var(--w) * 0.045), 21px);
+    line-height: 1.6;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  /* opening sequence */
+  .opening .to, .opening .hint { opacity: 0 !important; animation: none; }
+  .opening .env-float { animation: none; }
+  .flap.open { transform: rotateX(180deg); }
+  .flap.behind { z-index: 1; }
+  .flap-shadow.gone { opacity: 0; }
+  .env-float.lowered { transform: translateY(calc(var(--h) * 0.55)); }
+  .card.out { transform: translateY(calc(var(--h) * -1.25)); }
+  .env-float.away { transform: translateY(calc(var(--h) * 1.6)); opacity: 0; }
+
+  /* ---------- scene 2: the revealed card ---------- */
+  .reveal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+  }
+  .reveal.on { display: flex; }
+  .final {
+    width: min(92vw, calc((100vh - 140px) * 0.75), 600px);
+    aspect-ratio: 3 / 4;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.6), 0 6px 18px rgba(0,0,0,0.4);
+    transform-origin: 0 0;
+    will-change: transform;
+  }
+  @supports (height: 1svh) {
+    .final { width: min(92vw, calc((100svh - 140px) * 0.75), 600px); }
+  }
+  .final img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px 22px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .actions.on { opacity: 1; transform: none; }
+  .btn {
+    font: inherit;
+    font-size: 17px;
+    letter-spacing: 0.08em;
+    color: var(--forest-deep);
+    background: linear-gradient(180deg, #f1dfae, var(--gold));
+    border: 0;
+    border-radius: 999px;
+    padding: 10px 22px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  }
+  .btn:focus-visible, .link:focus-visible, .menu a:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+  .link {
+    font: inherit;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--text);
+    background: none;
+    border: 0;
+    padding: 6px 2px;
+    cursor: pointer;
+    opacity: 0.8;
+  }
+  .cal { position: relative; }
+  .menu {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 230px;
+    padding: 6px;
+    border-radius: 14px;
+    background: var(--cream);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    display: none;
+  }
+  .menu.on { display: block; }
+  .menu a {
+    display: block;
+    padding: 11px 14px;
+    border-radius: 9px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 17px;
+  }
+  .menu a:hover { background: rgba(0,0,0,0.06); }
+  .menu small { display: block; font-size: 13px; opacity: 0.65; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes float { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-6px) rotate(-0.6deg); } }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.55; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .env-float, .hint { animation: none !important; }
+    .to, .hint, .env-wrap { animation-duration: 0.01s !important; animation-delay: 0s !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true"></div>
+
+  <main class="scene" id="scene">
+    <p class="to" id="to"><span class="to-label">To</span><span class="to-name" id="guestName"></span></p>
+
+    <div class="env-wrap" id="envWrap" role="button" tabindex="0" aria-label="Open your save the date">
+      <div class="env-float" id="envFloat">
+        <div class="envelope" id="env">
+          <div class="env-back"><div class="liner"></div></div>
+          <div class="card-clip"><div class="card" id="card"><img src="photo.jpg" alt=""></div></div>
+          <svg class="env-front" viewBox="0 0 100 68" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="gSide" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#efe3ca"/><stop offset="1" stop-color="#e6d7b8"/>
+              </linearGradient>
+              <linearGradient id="gBottom" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#f8f1e2"/><stop offset="1" stop-color="#f1e6cf"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,1 Q0,0 1,0 L50,40 L99,0 Q100,0 100,1 V67 Q100,68 99,68 H1 Q0,68 0,67 Z" fill="#efe4cc"/>
+            <path d="M0.6,0.6 L45,40 Q46,41 45,42 L0.6,67.4 Z" fill="url(#gSide)"/>
+            <path d="M99.4,0.6 L55,40 Q54,41 55,42 L99.4,67.4 Z" fill="url(#gSide)"/>
+            <path d="M0,67 L46,43.5 Q50,41.6 54,43.5 L100,67 Q100,68 99,68 H1 Q0,68 0,67 Z" fill="url(#gBottom)" stroke="rgba(120,90,40,0.18)" stroke-width="0.25"/>
+          </svg>
+          <div class="flap-shadow" id="flapShadow"></div>
+          <div class="flap" id="flap"><div class="flap-face flap-out"></div><div class="flap-face flap-in"></div></div>
+          <div class="ribbon" id="ribbon" aria-hidden="true"></div>
+          <div class="posy" id="posy" aria-hidden="true"></div>
+          <div class="seal" id="seal"><span>R&amp;J</span></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="hint" id="hint">Tap to open</p>
+  </main>
+
+  <section class="reveal" id="reveal" aria-live="polite">
+    <div class="final" id="final">
+      <img src="photo.jpg" alt="Save the date: Rebecca &amp; Jacob, September 5, 2027, Bean Town Receptions">
+    </div>
+    <div class="actions" id="actions">
+      <div class="cal">
+        <button class="btn" id="calBtn" aria-expanded="false" aria-controls="calMenu">Add to calendar</button>
+        <div class="menu" id="calMenu">
+          <a href="save-the-date.ics" download>Apple Calendar<small>iPhone, iPad, Mac</small></a>
+          <a target="_blank" rel="noopener" href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Rebecca%20%26%20Jacob%27s%20Wedding&amp;dates=20270905%2F20270906&amp;location=Bean%20Town%20Receptions&amp;details=Save%20the%20date!%20Formal%20invitation%20to%20follow.">Google Calendar<small>Android, Gmail</small></a>
+          <a target="_blank" rel="noopener" href="https://outlook.live.com/calendar/0/action/compose?subject=Rebecca%20%26%20Jacob%27s%20Wedding&amp;startdt=2027-09-05&amp;enddt=2027-09-06&amp;allday=true&amp;location=Bean%20Town%20Receptions&amp;body=Save%20the%20date!%20Formal%20invitation%20to%20follow.">Outlook.com<small>Hotmail, Live, Outlook web</small></a>
+          <a href="save-the-date.ics" download>Other / Outlook desktop<small>Downloads a calendar file</small></a>
+        </div>
+      </div>
+      <button class="link" id="replay">↺ Open again</button>
+    </div>
+  </section>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var scene = $("scene"), envWrap = $("envWrap"), envFloat = $("envFloat"),
+      card = $("card"), posy = $("posy"), env = $("env"), flap = $("flap"), seal = $("seal"), flapShadow = $("flapShadow"),
+      reveal = $("reveal"), finalCard = $("final"), actions = $("actions"),
+      calBtn = $("calBtn"), calMenu = $("calMenu");
+
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- guest name from the link: ?to=Sarah%20Smith%20%26%20Tom%20Smith ---- */
+  var guest = "";
+  try { guest = (new URLSearchParams(location.search).get("to") || "").trim().slice(0, 120); } catch (e) {}
+  if (guest) {
+    $("guestName").textContent = guest;
+    document.title = "For " + guest + " · Save the Date";
+  } else {
+    $("to").querySelector(".to-label").textContent = "You've got mail";
+  }
+
+  /* ---- flowers: blue floral lining + the posy under the seal ---- */
+  document.documentElement.style.setProperty("--liner",
+    'url("data:image/svg+xml,' + encodeURIComponent(Flowers.linerTile(200)) + '")');
+  $("ribbon").innerHTML = Flowers.ribbonSVG();
+  posy.innerHTML = Flowers.posySVG(100);
+  var rustle = new Flowers.Rustle(posy.firstChild, 5.2);
+  rustle.pose(0);
+
+  /* Idle: the envelope floats and every few seconds gives a little "tap me" jiggle.
+     The posy is a spring system, so it lags, swings and settles after each jiggle,
+     with a gentle breeze sway on top. */
+  var JIG_EVERY = 4.6, idle = !reduce, last = null, t0 = performance.now();
+  env.style.transformOrigin = "50% 90%";
+  function jiggle(time) {
+    var ph = ((time + 2.4) % JIG_EVERY) / JIG_EVERY;      // first jiggle ~0.8 s after the page settles
+    if (ph < 0.55 || ph > 0.75) return 0;
+    var k = (ph - 0.55) / 0.2;
+    return 2.6 * Math.sin(k * Math.PI * 2 * 2.5) * (1 - k);
+  }
+  function idleLoop(now) {
+    if (!idle) return;
+    var time = (now - t0) / 1000, dt = last == null ? 0 : Math.min(0.05, (now - last) / 1000);
+    last = now;
+    var rot = time > 1.6 ? jiggle(time) : 0, lift = -5 * Math.sin(time * Math.PI * 2 / 5.2);
+    env.style.transform = "translateY(" + lift.toFixed(2) + "px) rotate(" + rot.toFixed(3) + "deg)";
+    if (dt) rustle.step(dt, rot);
+    rustle.pose(time);
+    requestAnimationFrame(idleLoop);
+  }
+  if (idle) requestAnimationFrame(idleLoop);
+
+  /* The posy comes loose and drops straight down off the bottom of the screen, stems still tied,
+     tipping a little as it falls (the flowers swing gently with the tilt). */
+  function dropPosy() {
+    idle = false;
+    env.style.transform = "";
+    if (reduce) { posy.style.visibility = "hidden"; return; }
+    posy.style.transformOrigin = "50% 67%";
+    var start = performance.now(), prev = start, DUR = 0.9;
+    (function fall(now) {
+      var t = (now - start) / 1000, dt = Math.min(0.05, (now - prev) / 1000), k = Math.min(1, t / DUR);
+      prev = now;
+      var y = 38 * (k * k), tilt = 6 * k;           // only a short drop...
+      posy.style.transform = "translateY(" + y.toFixed(1) + "px) rotate(" + tilt.toFixed(2) + "deg)";
+      posy.style.opacity = (1 - k * (2 - k)).toFixed(3);   // ...while it mostly fades away
+      if (dt) rustle.step(dt, tilt);
+      rustle.pose((now - t0) / 1000);
+      if (k >= 1) posy.style.visibility = "hidden";
+      else requestAnimationFrame(fall);
+    })(start);
+  }
+
+  /* ---- the opening sequence ---- */
+  var state = "closed", timers = [];
+  function later(ms, fn) { timers.push(setTimeout(fn, reduce ? 0 : ms)); }
+
+  function open() {
+    if (state === "opening") { finish(); return; }   // second tap = skip ahead
+    if (state !== "closed") return;
+    state = "opening";
+    scene.classList.add("opening");
+    envWrap.setAttribute("aria-label", "Opening…");
+    // the posy drops away, the seal breaks, the flap opens, the card slides out
+    // all at once: the bow unties and the ribbon fades, the posy drops, and the seal lifts with the flap
+    $("ribbon").classList.add("untie");
+    dropPosy();
+    var T = -150;
+    later(T + 250, function () { flap.classList.add("open"); seal.classList.add("open"); flapShadow.classList.add("gone"); });
+    later(T + 800, function () { envFloat.classList.add("lowered"); });
+    later(T + 1000, function () { flap.classList.add("behind"); });
+    later(T + 1150, function () { card.classList.add("out"); });
+    later(T + 2350, finish);
+  }
+
+  function finish() {
+    if (state === "done") return;
+    timers.forEach(clearTimeout); timers = [];
+    state = "done";
+    idle = false;
+    var from = card.getBoundingClientRect();
+    card.style.visibility = "hidden";
+    reveal.classList.add("on");
+    envFloat.classList.add("away");
+    var to = finalCard.getBoundingClientRect();
+    if (!reduce && from.width > 0) {
+      finalCard.style.transition = "none";
+      finalCard.style.transform = "translate(" + (from.left - to.left) + "px," + (from.top - to.top) + "px) scale(" + (from.width / to.width) + ")";
+      finalCard.offsetWidth; // reflow
+      finalCard.style.transition = "transform 1.1s cubic-bezier(.3,.1,.2,1)";
+      finalCard.style.transform = "none";
+    }
+    setTimeout(function () {
+      scene.style.visibility = "hidden";
+      actions.classList.add("on");
+    }, reduce ? 0 : 1000);
+  }
+
+  envWrap.addEventListener("click", open);
+  envWrap.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); }
+  });
+  $("replay").addEventListener("click", function () { location.reload(); });
+
+  /* ---- add-to-calendar menu ---- */
+  function closeMenu() { calMenu.classList.remove("on"); calBtn.setAttribute("aria-expanded", "false"); }
+  calBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    var on = calMenu.classList.toggle("on");
+    calBtn.setAttribute("aria-expanded", on ? "true" : "false");
+  });
+  document.addEventListener("click", function (e) { if (!calMenu.contains(e.target)) closeMenu(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeMenu(); });
+})();
+</script>
+</body>
+</html>
